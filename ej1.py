@@ -25,24 +25,15 @@ def exponencial(lamda):
 
 
 def simular_canal(lamb=0.5, T=10, mu=1):
-    # neventos, canal, ultimo_tiempo = Poisson_homogeneo(lamb=lamb, T=T, mu=1, t_inicial=0)
+    neventos, canal, ultimo_tiempo = Poisson_homogeneo(lamb=lamb, T=T, mu=1, t_inicial=0)
 
-    # ultimo_tiempo = ultimo_tiempo[0]
+    ultimo_tiempo = ultimo_tiempo[0]
 
-    canal = []
-    neventos = 8
-    j = 0
-    for i in range(neventos):
-        canal.append((j, 2))
-        j += 1
+    print(f"neventos es {neventos}")
+    print(f"canal es {canal}")
 
-    ultimo_tiempo = 8
-
-    # print(f"neventos es {neventos}")
-    # print(f"canal es {canal}")
-
-    # for i in range(len(canal)):
-        # print(canal[i][0], canal[i][1], canal[i][0] + canal[i][1])
+    for i in range(len(canal)):
+        print(canal[i][0], canal[i][1], canal[i][0] + canal[i][1])
 
     paquetes_enviados = 0
     tiempo_actual = 0
@@ -92,7 +83,7 @@ def revisar_simular_canal(res):
 
 
 
-res = simular_canal(lamb=1000, T=10, mu=1)
+res = simular_canal(lamb=0.5, T=10, mu=1)
 
 print(f"\nPaquetes enviados {res[0]}\n tiempo_actual {res[1]}\n tiempos_salida {res[2]}\n encolados {res[3]}\n")
 

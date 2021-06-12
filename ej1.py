@@ -29,11 +29,11 @@ def simular_canal(lamb=0.5, T=10, mu=1):
 
     ultimo_tiempo = ultimo_tiempo[0]
 
-    print(f"neventos es {neventos}")
-    print(f"canal es {canal}")
+    # print(f"neventos es {neventos}")
+    # print(f"canal es {canal}")
 
-    for i in range(len(canal)):
-        print(canal[i][0], canal[i][1], canal[i][0] + canal[i][1])
+    # for i in range(len(canal)):
+    #     print(canal[i][0], canal[i][1], canal[i][0] + canal[i][1])
 
     paquetes_enviados = 0
     tiempo_actual = 0
@@ -43,9 +43,6 @@ def simular_canal(lamb=0.5, T=10, mu=1):
     tiempos_salida = []
 
     while tiempo_actual <= ultimo_tiempo:
-        if len(buffer) > 100:
-            raise BufferError("Buffer saturado")
-            exit()
         if len(buffer) > 0: ## Tengo algo en el buffer
             tiempo_actual += (buffer[0][1])
             tiempos_salida.append(tiempo_actual)

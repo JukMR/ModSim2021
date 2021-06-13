@@ -4,7 +4,7 @@ from random import random, seed
 from math import sqrt, log
 
 
-seed(0) ## Fijar la semilla para debuggear
+# seed(0) ## Fijar la semilla para debuggear
 
 def Poisson_homogeneo(lamb, T, mu, t_inicial=0):
     t_inicial = 0
@@ -86,8 +86,6 @@ def revisar_simular_canal(res):
         tmp = i
     return True
 
-
-
 res = simular_canal(lamb=0.5, mu=1)
 
 # print(f"\nPaquetes enviados {res[0]}\n tiempo_actual {res[1]}\n tiempos_salida {res[2]}\n encolados {res[3]}\n tiempo_espera {res[4]}\n")
@@ -101,7 +99,6 @@ assert(revisar_simular_canal(res))
 
 z_alfa_2 = 2.33
 L = 0.01
-
 
 
 def Media_Muestral_X(z_alfa_2, L): #z_alfa_2 = z_(alfa/2)
@@ -135,19 +132,33 @@ intervalos = 18
 
 expon = [exponencial(0.5) for i in range(10000)]
 
-datos_simulados = []
-lamb = 0.5
-ultimo_tiempo = 0
-t_inicial = 0
-mu = 1
-neventos = 0
-while neventos <= 10000:
-    res = simular_canal(lamb=lamb, mu=1, t_inicial=t_inicial)
-    neventos += res[0]
-    datos_simulados.extend(res[4])
 
 
 
+def simular_experimento(lamb, mu, t_inicial, Nsim=10000):
+    neventos = 0
+    datos_simulados = []
+
+    while neventos < Nsim:
+        res = simular_canal(lamb=lamb, mu=1, t_inicial=t_inicial)
+        neventos += res[0]
+        datos_simulados.extend(res[4])
+
+    while neventos > Nsim:
+        datos_simulados.pop() # Saco el ultimo elemento
+        neventos -= 1
+    assert(len(datos_simulados) == Nsim)
+
+    return datos_simulados
+
+
+
+
+# Nsim son la cantidad de paquetes a simular
+datos_simulados = simular_experimento(lamb=0.5, mu=1, t_inicial=0, Nsim=10000)
+
+
+# exit()
 
 plt.subplot(211)
 n_exp, bins_exp, patch_exp = plt.hist(x=expon, bins=18, density=True)
@@ -161,7 +172,7 @@ n_exp, bins_exp, patch_exp = plt.hist(x=expon, bins=18, density=True)
 
 plt.subplot(212)
 n_sim, bins_sim, patch_sim = plt.hist(x=datos_simulados, bins=18, color="red")
-plt.show()
+# plt.show()
 
 # print(n_sim)
 # print(bins_sim)
@@ -198,7 +209,7 @@ def arreglar_arreglo_chi(arr):
     cutted_bins = []
     for i in range(idx_menor_5):
         cutted_bins.append([bins_sim[i], bins_sim[i+1]])
-    cutted_bins.append([bins_sim[idx_menor_5], "inf"])
+    cutted_bins.append([bins_sim[idx_menor_5], float("inf")])
 
 
     assert(len(arr) == len(cutted_bins))
@@ -210,34 +221,47 @@ def arreglar_arreglo_chi(arr):
 count_sim = np.histogram(datos_simulados, 18)[0]
 count_sim = list(count_sim)
 
-count_exp = np.histogram(expon, 18)[0]
-count_exp = list(expon)
-
-
 tt = arreglar_arreglo_chi(count_sim)
-
-# for i in range(16):
-#     print(f"Arr {tt[0][i]} ; Interv {tt[1][i]} ")
 
 frecuencias = tt[0]
 segmentos = tt[1]
 largo = tt[2]
 
+# print(largo)
 N = sum(frecuencias)
 
+## Arreglar arreglo exponenciales para obtener la probabilidad de los intervalos
+
+count_exp = np.histogram(expon, bins_sim)[0] ## Obtener el arreglo de frecuencias en los mismos intervalos
+count_exp = list(count_exp)
+
+# Juntar las probabilidades del ultimo intervalo de n-1 a inf
+
+
+def arreglar_arreglo_probabilidades_chi(count_exp, largo):
+
+    tmp = sum(count_exp[largo-1:])
+    count_exp[largo-1] = tmp
+
+    # Eliminar los ultimos elementos
+    for i in range(len(count_exp), largo, -1):
+        del count_exp[i-1]
+
+    return count_exp
+
+N_exp = sum(count_exp)
+count_exp = arreglar_arreglo_probabilidades_chi(count_exp, largo)
+
+# print(count_exp)
+# print(frecuencias)
+
+
 prob = []
+assert(len(count_exp) == len(frecuencias))
 for i in range(largo):
-    prob.append(frecuencias[i]/N)
+    prob.append(count_exp[i]/N_exp)
 
 
-# print("frecuencias es" , frecuencias)
-# print("segmentos es" , segmentos)
-# print("largo es" , largo)
-# print("prob es" , prob)
-# print("N es", N)
-
-# print(prob[0] * 10000)
-# print(prob[0] * 10000)
 
 
 ## Calculo estadistico T
@@ -252,8 +276,10 @@ from scipy.stats import chi2
 
 ## p-valor = P(X^(14) > T)
 
-print(T)
-print(f"p-valor con chi2 de grado 14: {1-chi2.cdf(T, 14):.5f}") # n-1=2
+# print(T)
+
+# print(f"p-valor con chi2 de grado 14: {1-chi2.cdf(T, largo-1-1):.5f}") # n-1=2
+print(f"{1-chi2.cdf(T, largo-1-1):.5f}") # n-1=2
 
 
 

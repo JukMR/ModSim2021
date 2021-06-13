@@ -4,8 +4,7 @@ from random import random, seed
 from math import sqrt, log
 
 
-
-# seed(0) ## Fijar la semilla para debuggear
+seed(0) ## Fijar la semilla para debuggear
 
 def Poisson_homogeneo(lamb, T, mu, t_inicial=0):
     t_inicial = 0
@@ -23,8 +22,6 @@ def Poisson_homogeneo(lamb, T, mu, t_inicial=0):
 def exponencial(lamda):
     U = 1-random()
     return -log(U)/lamda
-
-# print(exponencial(1))
 
 
 def simular_canal(lamb=0.5, mu=1, t_inicial=0):
@@ -97,6 +94,7 @@ res = simular_canal(lamb=0.5, mu=1)
 
 assert(revisar_simular_canal(res))
 
+
 ## Ejercicio 1a
 
 ## 2.33 es el z_alfa_2 para 98%
@@ -105,25 +103,6 @@ z_alfa_2 = 2.33
 L = 0.01
 
 
-## copiado
-
-
-# Nsim = 0
-# pvalor = 0
-# while Nsim <= 100 or sqrt(1/Nsim) > d:
-#     Nsim += 1
-#     uniformes= np.random.uniform(0, 1, n) # usamos uniformes porque conocemos los parámetros
-#     uniformes.sort()
-#     d_j = 0
-#     for j in range(n):
-#         u_j = uniformes[j]
-#         d_j = max(d_j, (j+1)/ n-u_j, u_j-j/n)
-#     if d_j >= D:
-#         pvalor += 1
-
-# print(f"{n}\t {D:.5f}\t {pvalor/Nsim:.5f}\t {Nsim}")
-# if n == 100:
-#     plt.hist(muestra, histtype='bar')
 
 def Media_Muestral_X(z_alfa_2, L): #z_alfa_2 = z_(alfa/2)
     'Confianza = (1 - alfa)%, amplitud del intervalo: L'
@@ -141,10 +120,11 @@ def Media_Muestral_X(z_alfa_2, L): #z_alfa_2 = z_(alfa/2)
         Scuad = Scuad * (1 - 1 /(n-1)) + n*(Media - Media_Ant)**2
     return Media
 
-print(f"La media muestral es de: {Media_Muestral_X(z_alfa_2, L)}")
+# print(f"La media muestral es de: {Media_Muestral_X(z_alfa_2, L)}") ## Comenntar esto para velocidad
 
-## Aca falta estimar la tasa real de uso del canal
+## Aca falta estimar la tasa real de uso del canal TODO
 
+## ==========================================================================
 ## Ejercicio 2
 
 import numpy as np
@@ -155,7 +135,7 @@ intervalos = 18
 
 expon = [exponencial(0.5) for i in range(10000)]
 
-normaa = []
+datos_simulados = []
 lamb = 0.5
 ultimo_tiempo = 0
 t_inicial = 0
@@ -164,29 +144,152 @@ neventos = 0
 while neventos <= 10000:
     res = simular_canal(lamb=lamb, mu=1, t_inicial=t_inicial)
     neventos += res[0]
-    normaa.extend(res[4])
+    datos_simulados.extend(res[4])
 
 
-
-
-# expon.sort()
-# expon_min = min(expon)
-# expon_max = max(expon)
-
-# bins = np.linspace(expon_min, expon_max, num=18)
 
 
 plt.subplot(211)
-n, bins, patch = plt.hist(x=expon, bins=18, density=True)
+n_exp, bins_exp, patch_exp = plt.hist(x=expon, bins=18, density=True)
 
-# print(n)
-# print(bins)
-# print(patch)
+# print(n_exp)
+# print(bins_exp)
+# print(patch_exp)
 # print("Expon es ", expon)
 
 
 
 plt.subplot(212)
-n, bins, patch = plt.hist(x=normaa, bins=18, density=True, color="red")
+n_sim, bins_sim, patch_sim = plt.hist(x=datos_simulados, bins=18, color="red")
 plt.show()
+
+# print(n_sim)
+# print(bins_sim)
+# print(patch_sim)
+
+
+## ==========================================================================
+## Ejercicio 3
+
+
+## Chi-cuadrado
+
+def arreglar_arreglo_chi(arr):
+    idx_menor_5 = False
+    for i in range(len(arr)):
+        # print(arr[i])
+        if arr[i] <= 5:
+            idx_menor_5 = i
+            break
+
+    # print(arr)
+    # print(idx_menor_5)
+
+    tmp = 0
+    for i in range(idx_menor_5, intervalos):
+        tmp += arr[i]
+
+    # print("Before", arr)
+    arr[idx_menor_5] = tmp
+    arr = arr[:idx_menor_5+1]
+    # print("After ", arr)s
+
+
+    cutted_bins = []
+    for i in range(idx_menor_5):
+        cutted_bins.append([bins_sim[i], bins_sim[i+1]])
+    cutted_bins.append([bins_sim[idx_menor_5], "inf"])
+
+
+    assert(len(arr) == len(cutted_bins))
+    # print("LEN ARR", len(arr))
+    # print("LEN Cutted", len(cutted_bins))
+    return arr, cutted_bins, len(arr)
+
+
+count_sim = np.histogram(datos_simulados, 18)[0]
+count_sim = list(count_sim)
+
+count_exp = np.histogram(expon, 18)[0]
+count_exp = list(expon)
+
+
+tt = arreglar_arreglo_chi(count_sim)
+
+# for i in range(16):
+#     print(f"Arr {tt[0][i]} ; Interv {tt[1][i]} ")
+
+frecuencias = tt[0]
+segmentos = tt[1]
+largo = tt[2]
+
+N = sum(frecuencias)
+
+prob = []
+for i in range(largo):
+    prob.append(frecuencias[i]/N)
+
+
+# print("frecuencias es" , frecuencias)
+# print("segmentos es" , segmentos)
+# print("largo es" , largo)
+# print("prob es" , prob)
+# print("N es", N)
+
+# print(prob[0] * 10000)
+# print(prob[0] * 10000)
+
+
+## Calculo estadistico T
+T = 0
+for i in range(largo):
+    T += ((frecuencias[i] - N * prob[i])**2 / (N * prob[i]))
+
+
+from scipy.stats import chi2
+
+# p-valor igual a una chi-cuadrado de k = 16 - 1 - 1 = 14
+
+## p-valor = P(X^(14) > T)
+
+print(T)
+print(f"p-valor con chi2 de grado 14: {1-chi2.cdf(T, 14):.5f}") # n-1=2
+
+
+
+## Ejercicio 4
+
+
+from random import gammavariate
+from math import exp
+
+def Gamma_AR(k, mu):
+    while True:
+        u = 1 - random()
+        y = -log(u) * (k * mu) # Generamos la Exponencial de parámetro 1/k*mu
+        v = random()
+        if v < (y/(k*mu)) ** (k-1) * exp((k-1)*(mu*k-y)/(mu*k)):
+            return y
+
+
+gammas = [gammavariate(0.1, 10) for _ in range(10000)]
+
+fig, ax = plt.subplots(3)
+ax[0].hist(gammas, bins=18)
+
+# Uso el método de aceptacion y rechazo para poder generar con alfa = 0.5 , beta = 2
+
+
+
+
+gammas_AR = [Gamma_AR(1, 1) for _ in range(10000)]
+
+ax[1].hist(gammas_AR, bins=18)
+
+
+ax[1].hist(datos_simulados, bins=18, color='red', alpha=0.5)
+ax[2].hist(datos_simulados, bins=18, color='green', alpha=1)
+
+# plt.show()
+
 

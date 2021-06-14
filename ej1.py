@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import chi2
 
 
-seed(0) # Fijar la semilla para debuggear
+seed(0) # Fijar la semilla para obtener resultados consistentes
 
 def Poisson_homogeneo(lamb, mu, t_inicial=0, Npaquetes=10):
     NT = 0
@@ -122,7 +122,6 @@ def Media_Muestral_X(z_alfa_2, L, lamb): #z_alfa_2 = z_(alfa/2)
     return Media, paq_gen, Scuad, tiempos_demora, tiempo_espera_cola, t_inicial
 
 
-
 Media_Muestral_al_98,\
     n_sim,\
     scuad,\
@@ -131,19 +130,17 @@ Media_Muestral_al_98,\
     tiempo_total_sim\
     = Media_Muestral_X(z_alfa_2, L, lamb=0.5)
 
+print(f"El tiempo medio de demora tau_m es de: {Media_Muestral_al_98}")
+print(f"Nsim es: {n_sim}")
+print(f"El tiempo total simulado es de: {tiempo_total_sim}")
 
-
-# Aca falta estimar la tasa real de uso del canal TODO
+# Estimacion de la tasa real de uso del canal
 tasa_uso = n_sim * Media_Muestral_al_98 / tiempo_total_sim
 
-print(f"La tasa real de uso estimada es de {tasa_uso}")
+print(f"La tasa real de uso estimada es de {tasa_uso * 100} %")
 
+# Cálculo del intervalo de confianza al 98% de semiancho L=0.01
 print(f"El intervalo de confianza del 98% es de: {Media_Muestral_al_98 - 2.33 * sqrt(scuad / n_sim)} , {Media_Muestral_al_98 + 2.33 * sqrt(scuad / n_sim)}")
-# La media muestral es de: 1.9888120120656834
-# La cantidad de valores generados es de: 845946
-# El valor de Scuad es : 3.895564189310809
-
-
 
 
 
@@ -154,40 +151,34 @@ print(f"El intervalo de confianza del 98% es de: {Media_Muestral_al_98 - 2.33 * 
 # Voy a tomar 18 intervalos
 intervalos = 18
 
+# El m
 expon = [exponencial(0.5) for i in range(n_sim)]
 
-
-datos_simulados = tiempos_demora_sim
-
 plt.subplot(211)
-n_exp, bins_exp, patch_exp = plt.hist(x=expon, bins=18,)
-
-# print(n_exp)
-# print(bins_exp)
-# print(patch_exp)
-# print("Expon es ", expon)
+plt.title("Histogramas de Nsim tiempos con datos simulados y Nsim datos de exponencial")
+plt.hist(x=expon, bins=18, label='Datos exponencial teorica', color='blue')
+plt.legend(loc='best')
 
 
 plt.subplot(212)
-n_sim_hist, bins_sim_hist, patch_sim_hist = plt.hist(x=datos_simulados, bins=18, color="red")
+plt.hist(x=tiempos_demora_sim, bins=18, color="red", label='Datos simulados')
+plt.legend(loc='best')
 
-# plt.show()
+plt.show()
 
-# print(n_sim)
-# print(bins_sim)
-# print(patch_sim)
-
-plt.hist(x=expon, bins=18, color='blue')
-plt.hist(x=datos_simulados, bins=18, color="yellow", alpha=0.5)
-# plt.show()
+n_exp, bins_exp, patch_exp = plt.hist(x=tiempos_demora_sim, bins=18, color="blue", label="Datos simulados", alpha=1)
+plt.hist(x=expon, bins=bins_exp, color='red', label="Exponencial teorica", alpha=0.5)
+plt.title("Superposicion histogramas exponencial lamb=0.5 vs tiempos de demora")
+plt.legend(loc='best')
+plt.show()
 
 # ==========================================================================
 # Ejercicio 3
 
 
-# Chi-cuadrado
+# Test de bondad de ajuste usando Chi-cuadrado
 
-# Funcion para conseguir que todos los intervalos tengan por lo menos 5
+# Función para conseguir que todos los intervalos tengan por lo menos 5
 # observaciones
 def arreglar_arreglo_chi_5elem(arr, bins_sim):
     idx_menor_5 = False
@@ -250,8 +241,6 @@ def calcular_chi2(datos_simulados, distrib_teo):
 
     N_exp = sum(frec_teorica)
 
-    print("count_exp", frec_teorica[:100])
-
 
     # La cantidad de intervalos tiene que ser igual para los datos teoricos y
     # los datos simulados.
@@ -271,9 +260,6 @@ def calcular_chi2(datos_simulados, distrib_teo):
             T += ((frecuencias[i] - N * prob[i])**2 / (N * prob[i]))
 
 
-    print(f"T es: {T}")
-    print(f"Largo es: {largo}")
-
     # Como estamos estimando un parámetro debo tomar una chi-cuadrado con k-1-1
     # grados de libertad (con k igual al numero de intervalos cortado por la
     # funcion arreglar_arreglo_chi_5elem)
@@ -285,19 +271,13 @@ def calcular_chi2(datos_simulados, distrib_teo):
 
 
 
-bins_hist_sim = np.histogram(datos_simulados, bins=18)[1]
-
-
-print(bins_sim_hist)
-p_valor = calcular_chi2(datos_simulados, expon)
+p_valor = calcular_chi2(tiempos_demora_sim, expon)
 
 print(f"El p-valor del ejercicio 3 es: {p_valor}")
 
 
-# Resultado : 0.00004
-
 # Para un nivel de confianza del 99 %
-# la hipotesis nula se rechaza porque 0.01 > (p-valor=0.00004)
+# la hipotesis nula se rechaza porque 0.01 > (p-valor=0)
 # Por lo tanto, la muestra simulada no proviene de una exponencial de parametro lambda=0.5
 
 # ==================================================================================================
@@ -306,14 +286,6 @@ print(f"El p-valor del ejercicio 3 es: {p_valor}")
 
 from random import gammavariate
 from math import exp
-
-def Gamma_AR(k, mu):
-    while True:
-        u = 1 - random()
-        y = -log(u) * (k * mu) # Generamos la Exponencial de parámetro 1/k*mu
-        v = random()
-        if v < (y/(k*mu)) ** (k-1) * exp((k-1)*(mu*k-y)/(mu*k)):
-            return y
 
 
 # Estimacion Media_Tc
@@ -328,33 +300,19 @@ print(f"La estimacion de tc es {estimacion_tc}")
 
 ## Generación con Gammas
 
-
-gammas = [gammavariate(0.1, 10) for _ in range(n_sim)]
-
-fig, ax = plt.subplots(4)
-ax[0].hist(gammas, bins=18, color='cyan')
-
-# Uso el método de aceptacion y rechazo para poder generar con
-# alfa = 0.5, beta = 2
+gammas = [gammavariate(0.5, 2) for _ in range(n_sim)]
 
 
-gammas_AR = [Gamma_AR(0.1, 10) for _ in range(n_sim)]
-
-ax[1].hist(gammas_AR, bins=18, color='yellow')
+frec, bin, _ = plt.hist(tiempos_espera_cola_sim, bins=18, color='blue', alpha=1, label='tiempo cola espera')
 
 
-ax[2].hist(gammas, bins=18, color='red', alpha=1)
-ax[2].hist(gammas_AR, bins=18, color='blue', alpha=0.5)
-ax[3].hist(tiempos_espera_cola_sim, bins=18, color='green', alpha=1)
-
-
+plt.hist(gammas, bins=bin, color='orange', label="Distribucion gamma variate", alpha=0.5)
+plt.title("Superposicion de histogramas gamma(0.5,2) y tiempos espera en cola simulados")
+plt.legend(loc='best')
 plt.show()
 
-print('tiempos_espera_cola_sim', tiempos_espera_cola_sim[100:150])
-print('gammas', gammas[100:150])
 
-
-print(f"El p-valor del ej4 es :{calcular_chi2(tiempos_espera_cola_sim, gammas)}")
+print(f"El p-valor del ejercicio 4 es: {calcular_chi2(tiempos_espera_cola_sim, gammas)}")
 
 
 # ==================================================================================================
@@ -363,12 +321,8 @@ print(f"El p-valor del ej4 es :{calcular_chi2(tiempos_espera_cola_sim, gammas)}"
 
 nueva_sim_1 = simular_canal(lamb=0.5, mu=1, t_inicial=0, Npaquetes=10000)[4]
 
-print(nueva_sim_1[1000:1050])
-
 nueva_sim_2 = simular_canal(lamb=0.05, mu=0.1, t_inicial=0, Npaquetes=10000)[4]
 
-
-print(nueva_sim_2[1000:1050])
 
 fig = plt.figure()
 ax1 = fig.add_subplot(121)
@@ -380,17 +334,48 @@ ax1.hist(nueva_sim_1, bins=18, color='green')
 ax2.hist(nueva_sim_2, bins=18, color='green')
 
 ax1.set_ylabel("Frecuencia")
-ax1.set_xlabel("Intervalos")
+ax1.set_xlabel("Segundos")
 ax1.set_title("Simulacion para lamb=0.5, mu=1, Nsim=10000")
 
 ax2.set_ylabel("Frecuencia")
-ax2.set_xlabel("Intervalos")
+ax2.set_xlabel("Segundos")
 ax2.set_title("Simulacion para lamb=0.05, mu=0.1, Nsim=10000")
 
 plt.show()
 
 fig = plt.figure()
-plt.hist(nueva_sim_1, bins=18, color='red')
-plt.hist(nueva_sim_2, bins=18, color='green', alpha=0.5)
+plt.hist(nueva_sim_1, bins=18, color='red', label='lamb=0.5, mu*c = 1')
+plt.hist(nueva_sim_2, bins=18, color='green', alpha=0.5, label="lamb=0.05, mu*c = 0.1")
+plt.legend(loc='best')
+plt.title("Superposicion de los histogramas")
 
 plt.show()
+
+
+
+# ==================================================================================================
+'''
+## Anexo
+
+# Algoritmo para encontrar los mejores parámetros de gamma
+
+for k in range(1,11):
+    print(f"alfa es {k * 0.1}, beta es {1/(k * 0.1)}")
+
+
+    gammas = [gammavariate(k * 0.1, 1/(k * 0.1) ) for _ in range(n_sim)]
+
+
+
+    # plt.hist(gammas, bins=18, color='purple', label='Gamma variate')
+    # plt.legend(loc='best')
+    # plt.title("Datos distribucion gamma generada")
+    # plt.show()
+
+
+    frec, bin, _ = plt.hist(tiempos_espera_cola_sim, bins=18, color='blue', alpha=1, label='tiempo cola espera')
+    plt.hist(gammas, bins=bin, color='orange', label="Distribucion gamma variate", alpha=0.5)
+    plt.legend(loc='best')
+    plt.show()
+
+'''

@@ -1,23 +1,25 @@
 # Ejercicio 1. C se toma = 1, mu = 1 y lamb = 0.5
 
+from hashlib import new
 from random import random, seed
 from math import gamma, sqrt, log
 
 import numpy as np
 import matplotlib.pyplot as plt
 
+from scipy.stats import chi2
+
+
 seed(0) # Fijar la semilla para debuggear
 
-def Poisson_homogeneo(lamb, T, mu, t_inicial=0):
-    t_inicial = 0
+def Poisson_homogeneo(lamb, mu, t_inicial=0, Npaquetes=10):
     NT = 0
     Eventos = []
-    while t_inicial < T:
+    while NT < Npaquetes:
         U = 1 - random()
         t_inicial += -log(U)/lamb
-        if t_inicial <= T:
-            NT += 1
-            Eventos.append((t_inicial, exponencial(mu)))
+        NT += 1
+        Eventos.append((t_inicial, exponencial(mu)))
     return NT, Eventos
 
 
@@ -26,21 +28,11 @@ def exponencial(lamda):
     return -log(U)/lamda
 
 
-def simular_canal(lamb=0.5, mu=1, t_inicial=0):
-    T = t_inicial + 1000 # Genera todos los eventos en los siguientes 100 tiempos
-    neventos, canal = Poisson_homogeneo(lamb=lamb, T=T, mu=mu, t_inicial=t_inicial)
-
-    print("AHHHHHHHHH",canal[-1], neventos)
-    ultimo_tiempo = canal[-1][0]
-
-    # print(f"neventos es {neventos}")
-    # print(f"canal es {canal}")
-
-    # for i in range(len(canal)):
-        # print(canal[i][0], canal[i][1], canal[i][0] + canal[i][1])
+def simular_canal(lamb=0.5, mu=1, t_inicial=0, Npaquetes=100):
+    neventos, canal = Poisson_homogeneo(lamb=lamb, mu=mu, t_inicial=t_inicial, Npaquetes=Npaquetes)
 
     paquetes_enviados = 0
-    tiempo_actual = 0
+    tiempo_actual = t_inicial
     encolados = 0
 
     buffer = []
@@ -48,11 +40,13 @@ def simular_canal(lamb=0.5, mu=1, t_inicial=0):
     tiempos_demora = []
     tiempo_espera_cola = []
 
-    while tiempo_actual <= T:
-        if len(buffer) > 0: # Tengo algo en el buffer
-            tiempos_demora.append(buffer[0][1] + tiempo_actual - buffer[0][0])
-            tiempo_espera_cola.append(tiempo_actual - buffer[0][0])
-            tiempo_actual += (buffer[0][1])
+    while paquetes_enviados < Npaquetes:
+        if len(buffer) > 0: # Tengo algo en el buffer.
+            llegada_paquete, ancho_paquete = buffer[0]
+
+            tiempos_demora.append(ancho_paquete + tiempo_actual - llegada_paquete)
+            tiempo_espera_cola.append(tiempo_actual - llegada_paquete)
+            tiempo_actual += (ancho_paquete)
             tiempos_salida.append(tiempo_actual)
             paquetes_enviados += 1
             buffer.pop(0)
@@ -61,64 +55,31 @@ def simular_canal(lamb=0.5, mu=1, t_inicial=0):
 
             if len(canal) > 0: # El canal tiene algun paquete
 
-                if tiempo_actual > canal[0][0]: # Me pasé algún paquete que tengo que encolar
-                    buffer.append(canal[0])
+                llegada_paquete, ancho_paquete = canal[0]
+                if tiempo_actual > llegada_paquete: # Me pasé algún paquete que tengo que encolar.
+                    buffer.append((llegada_paquete, ancho_paquete))
                     canal.pop(0)
                     encolados += 1
 
-                else: # El buffer esta vacio y no perdí ningún paquete. Atiendo el paquete
-                    tiempo_actual = canal[0][0] + canal[0][1]
+                else: # El buffer esta vacio y no perdí ningún paquete. Atiendo el paquete.
+
+                    llegada_paquete, ancho_paquete = canal[0]
+                    tiempo_actual = llegada_paquete + ancho_paquete
                     paquetes_enviados += 1
-                    tiempos_salida.append(canal[0][0] + canal[0][1])
-                    tiempos_demora.append(canal[0][1])
+                    tiempos_salida.append(llegada_paquete + ancho_paquete)
+                    tiempos_demora.append(ancho_paquete)
                     tiempo_espera_cola.append(0) # El paquete no espero nada
                     canal.pop(0)
 
-            else: # El canal esta vacio. Simulo nuevos paquetes
-                # nuevaIter = Poisson_homogeneo(lamb=lamb, T=tiempo_actual+100, mu=1, t_inicial=tiempo_actual)
-                # neventos += nuevaIter[0]
-                # for i in nuevaIter[1]:
-                #     canal.append(i)
-                # ultimo_tiempo = canal[-1][0]
+            else: # El canal esta vacio. Termino.
                 print("Me quede sin paquetes")
                 break
 
     return paquetes_enviados, tiempo_actual, tiempos_salida, encolados, tiempos_demora, tiempo_espera_cola
 
 
-def revisar_simular_canal(res):
-    tmp = 0
-    for i in res[2]:
-        if tmp > i:
-            raise ValueError('Los tiempos de salida se solapan')
-        tmp = i
-    return True
-
-
-def simular_tiempos_demora(lamb, mu, t_inicial, Nsim=10000):
-    neventos = 0
-    datos_simulados = []
-
-    while neventos < Nsim:
-        res = simular_canal(lamb=lamb, mu=1, t_inicial=t_inicial)
-        neventos += res[0]
-        datos_simulados.extend(res[4])
-
-    while neventos > Nsim:
-        datos_simulados.pop() # Saco el ultimo elemento
-        neventos -= 1
-    assert(len(datos_simulados) == Nsim)
-
-    return datos_simulados
-
-
-res = simular_canal(lamb=0.5, mu=1)
-
-# print(f"\nPaquetes enviados {res[0]}\n tiempo_actual {res[1]}\n tiempos_salida {res[2]}\n encolados {res[3]}\n tiempo_demora {res[4]}\n tiempo_espera_cola{res[5]}\n")
-
-# assert(revisar_simular_canal(res))
-
-# Ejercicio 1a
+# ==========================================================================
+# Ejercicio 1
 
 # 2.33 es el z_alfa_2 para 98%
 
@@ -131,7 +92,7 @@ def Media_Muestral_X(z_alfa_2, L, lamb): #z_alfa_2 = z_(alfa/2)
     t_inicial = 0
     'Confianza = (1 - alfa)%, amplitud del intervalo: L'
 
-    tmp = simular_canal(lamb=lamb, mu=1, t_inicial=0)
+    tmp = simular_canal(lamb=lamb, mu=1, t_inicial=0, Npaquetes=1000)
 
     t_inicial = tmp[1]
     buffer_tiempo_demora = tmp[4]
@@ -143,12 +104,12 @@ def Media_Muestral_X(z_alfa_2, L, lamb): #z_alfa_2 = z_(alfa/2)
 
 
     d = L / (2 * z_alfa_2)
-    Scuad, n = 0, 1
-    while n <= 100 or sqrt(Scuad / n) > d:
-        n += 1
+    Scuad, paq_gen = 0, 1
+    while paq_gen <= 100 or sqrt(Scuad / paq_gen) > d:
+        paq_gen += 1
         if len(buffer_tiempo_demora) == 0:
-            tmp = simular_canal(lamb=lamb, mu=1, t_inicial=t_inicial)
-            t_inicial += tmp[1]
+            tmp = simular_canal(lamb=lamb, mu=1, t_inicial=t_inicial, Npaquetes=1000)
+            t_inicial = tmp[1]
             buffer_tiempo_demora = tmp[4]
             tiempo_espera_cola.extend(tmp[5])
 
@@ -156,53 +117,33 @@ def Media_Muestral_X(z_alfa_2, L, lamb): #z_alfa_2 = z_(alfa/2)
         tiempos_demora.append(X)
 
         Media_Ant = Media
-        Media = Media_Ant + (X - Media_Ant) / n
-        Scuad = Scuad * (1 - 1 /(n-1)) + n*(Media - Media_Ant)**2
-    return Media, n, Scuad, tiempos_demora, tiempo_espera_cola
-
-import pickle
-
-# Valores para no volver a correr la funcion
-with open ('tiempos_demora_sim', 'rb') as fp:
-    tiempos_demora_sim = pickle.load(fp)
-
-with open ('tiempos_espera_cola_sim', 'rb') as fp:
-    tiempos_espera_cola_sim = pickle.load(fp)
+        Media = Media_Ant + (X - Media_Ant) / paq_gen
+        Scuad = Scuad * (1 - 1 /(paq_gen-1)) + paq_gen*(Media - Media_Ant)**2
+    return Media, paq_gen, Scuad, tiempos_demora, tiempo_espera_cola, t_inicial
 
 
-Media_Muestral_al_98 = 1.9979837101936286
-n_sim = 858567
-scuad = 3.9536833670037024
 
-# resultados_simulacion = Media_Muestral_X(z_alfa_2, L, lamb=0.5)
+Media_Muestral_al_98,\
+    n_sim,\
+    scuad,\
+    tiempos_demora_sim,\
+    tiempos_espera_cola_sim,\
+    tiempo_total_sim\
+    = Media_Muestral_X(z_alfa_2, L, lamb=0.5)
 
-# Media_Muestral_al_98 = resultados_simulacion[0]
-# n_datos_sim = resultados_simulacion[1]
-# scuad = resultados_simulacion[2]
-# tiempos_demora_sim = resultados_simulacion[3]
-# tiempos_espera_cola_sim = resultados_simulacion[4]
 
-print(f"La media muestral es de: {Media_Muestral_al_98}")
-print(f"La cantidad de valores generados es de: {n_sim}")
-print(f"El valor de Scuad es : {scuad}")
-# print(f"Los valores generados son: {result[2]}")
-# Comentar esto para velocidad
 
 # Aca falta estimar la tasa real de uso del canal TODO
+tasa_uso = n_sim * Media_Muestral_al_98 / tiempo_total_sim
+
+print(f"La tasa real de uso estimada es de {tasa_uso}")
+
+print(f"El intervalo de confianza del 98% es de: {Media_Muestral_al_98 - 2.33 * sqrt(scuad / n_sim)} , {Media_Muestral_al_98 + 2.33 * sqrt(scuad / n_sim)}")
+# La media muestral es de: 1.9888120120656834
+# La cantidad de valores generados es de: 845946
+# El valor de Scuad es : 3.895564189310809
 
 
-# La media muestral es de: 1.9979837101936286
-# La cantidad de valores generados es de: 858567
-
-
-
-
-# with open('tiempos_demora_sim', 'wb') as fp:
-#     pickle.dump(tiempos_demora_sim, fp)
-
-
-# with open('tiempos_espera_cola_sim', 'wb') as fp:
-#     pickle.dump(tiempos_espera_cola_sim, fp)
 
 
 
@@ -246,108 +187,111 @@ plt.hist(x=datos_simulados, bins=18, color="yellow", alpha=0.5)
 
 # Chi-cuadrado
 
-# Funcion para conseguir que todos los intervalos tengan por lo menos 5 observaciones
+# Funcion para conseguir que todos los intervalos tengan por lo menos 5
+# observaciones
 def arreglar_arreglo_chi_5elem(arr, bins_sim):
-
     idx_menor_5 = False
     for i in range(len(arr)):
-        # print(arr[i])
-        if arr[i] <= 5:
-            idx_menor_5 = i
+        if arr[i] < 5:
+            idx_menor_5 = i -1
             break
 
+    # Todos los intervalos tienen al menos 5 elementos
+    # Corrijo el ultimo intervalo para que vaya hasta infinito y termino
+    if idx_menor_5 == False:
+        new_bins = bins_sim
+        new_bins[-1] = float('inf')
+        return arr, new_bins
 
+
+    # Acumular las frecuencias desde el n con menos de 5 observaciones hasta el
+    # ultimo intervalo
     tmp = 0
-    for i in range(idx_menor_5, intervalos):
+    for i in range(idx_menor_5, len(bins_sim) - 1):
         tmp += arr[i]
 
+
+    # Recortar el arreglo y guardar las frecuencias acumuladas del n con menos
+    # de 5 obs. hasta el ultimo intervalo
     arr[idx_menor_5] = tmp
     arr = arr[:idx_menor_5+1]
 
+    new_bins = bins_sim[:idx_menor_5+2]
+    new_bins[-1] = float('inf')
+    assert(len(arr) == len(new_bins) - 1)
 
-    cutted_bins = []
-    for i in range(idx_menor_5):
-        cutted_bins.append([bins_sim[i], bins_sim[i+1]])
-    cutted_bins.append([bins_sim[idx_menor_5], float("inf")])
-
-
-    assert(len(arr) == len(cutted_bins))
-    # print("LEN ARR", len(arr))
-    # print("LEN Cutted", len(cutted_bins))
-    return arr, cutted_bins
+    return arr, new_bins
 
 
-def arreglar_arreglo_probabilidades_exp(count_exp, largo):
 
-    # Recortar arreglo probabilidades teoricas
-    tmp = sum(count_exp[largo-1:])
-    count_exp[largo-1] = tmp
+def calcular_chi2(datos_simulados, distrib_teo):
 
-    # Eliminar los ultimos elementos
-    for i in range(len(count_exp), largo, -1):
-        del count_exp[i-1]
+    frec_sim, bins = np.histogram(datos_simulados, 18)
+    frec_sim = list(frec_sim)
 
-    return count_exp
+    frecuencias, segmentos = arreglar_arreglo_chi_5elem(frec_sim, bins)
 
+    largo = len(frecuencias)
 
-def simulacion_ej3(datos_simulados, expon):
-
-
-    count_sim = np.histogram(datos_simulados, 18)[0]
-    count_sim = list(count_sim)
-
-    print(count_sim)
-
-    tt = arreglar_arreglo_chi_5elem(count_sim, bins_sim_hist)
-
-    frecuencias = tt[0]
-    largo = len(tt[0])
-    segmentos = tt[1]
+    # El arreglo de intervalos tiene que tener un elemento mas que el arreglo de
+    # frecuencias
+    assert(len(segmentos) - 1 == largo)
 
     N = sum(frecuencias)
 
-    # Arreglar arreglo exponenciales para obtener la probabilidad de los intervalos
+    # Arreglar arreglo exponenciales para obtener la probabilidad de los
+    # intervalos
 
-    count_exp = np.histogram(expon, bins_sim_hist)[0] # Obtener el arreglo de frecuencias en los mismos intervalos
-    count_exp = list(count_exp)
+    # Obtener el arreglo de frecuencias en los mismos intervalos
+    frec_teorica = np.histogram(distrib_teo, segmentos)[0]
+    frec_teorica = list(frec_teorica)
 
     # Juntar las probabilidades del ultimo intervalo de n-1 a inf
 
-    N_exp = sum(count_exp)
-    count_exp = arreglar_arreglo_probabilidades_exp(count_exp, largo)
+    N_exp = sum(frec_teorica)
 
+    print("count_exp", frec_teorica[:100])
+
+
+    # La cantidad de intervalos tiene que ser igual para los datos teoricos y
+    # los datos simulados.
+    assert(len(frec_teorica) == len(frecuencias))
 
     prob = []
-    assert(len(count_exp) == len(frecuencias))
-    for i in range(len(count_exp)):
-        prob.append(count_exp[i]/N_exp)
+    for i in range(len(frec_teorica)):
+        prob.append(frec_teorica[i]/N_exp)
 
 
     # Calculo estadistico T
     T = 0
     for i in range(largo):
-        # print(T)
-        if (prob[i]) != 0: # Reviso que el intervalo tomado no tenga ningun valor
+        # Reviso que el intervalo tomado no tenga ningun valor con prob=0 para
+        # no dividir por 0
+        if (prob[i]) != 0:
             T += ((frecuencias[i] - N * prob[i])**2 / (N * prob[i]))
 
 
-    from scipy.stats import chi2
+    print(f"T es: {T}")
+    print(f"Largo es: {largo}")
 
-    # p-valor igual a una chi-cuadrado de k = 16 - 1 - 1 = 14
+    # Como estamos estimando un parámetro debo tomar una chi-cuadrado con k-1-1
+    # grados de libertad (con k igual al numero de intervalos cortado por la
+    # funcion arreglar_arreglo_chi_5elem)
 
-    # p-valor = P(X^(14) > T)
 
-    print(T)
-
-    # print(f"p-valor con chi2 de grado 14: {1-chi2.cdf(T, largo-1-1):.5f}") # n-1=2
     p_valor = 1-chi2.cdf(T, largo-1-1)
-    # print(f"{p_valor:.5f}") # n-1=2
 
     return p_valor
 
-p_valor = simulacion_ej3(datos_simulados, expon)
-# print(p_valor)
-print(f'{p_valor.tolist():.5f}')
+
+
+bins_hist_sim = np.histogram(datos_simulados, bins=18)[1]
+
+
+print(bins_sim_hist)
+p_valor = calcular_chi2(datos_simulados, expon)
+
+print(f"El p-valor del ejercicio 3 es: {p_valor}")
 
 
 # Resultado : 0.00004
@@ -379,13 +323,13 @@ n_tc = len(tiempos_espera_cola_sim)
 
 estimacion_tc = tc/n_tc
 
-print(estimacion_tc)
+print(f"La estimacion de tc es {estimacion_tc}")
 
 
-## Generacion con Gammas
+## Generación con Gammas
 
 
-gammas = [gammavariate(0.5, 2) for _ in range(n_sim)]
+gammas = [gammavariate(0.1, 10) for _ in range(n_sim)]
 
 fig, ax = plt.subplots(4)
 ax[0].hist(gammas, bins=18, color='cyan')
@@ -394,111 +338,37 @@ ax[0].hist(gammas, bins=18, color='cyan')
 # alfa = 0.5, beta = 2
 
 
-gammas_AR = [Gamma_AR(0.5, 2) for _ in range(n_sim)]
+gammas_AR = [Gamma_AR(0.1, 10) for _ in range(n_sim)]
 
 ax[1].hist(gammas_AR, bins=18, color='yellow')
 
 
 ax[2].hist(gammas, bins=18, color='red', alpha=1)
 ax[2].hist(gammas_AR, bins=18, color='blue', alpha=0.5)
-rr = ax[3].hist(tiempos_espera_cola_sim, bins=18, color='green', alpha=1)
+ax[3].hist(tiempos_espera_cola_sim, bins=18, color='green', alpha=1)
 
 
 plt.show()
 
+print('tiempos_espera_cola_sim', tiempos_espera_cola_sim[100:150])
+print('gammas', gammas[100:150])
 
 
-
-def calcular_chi2(datos_simulados, distrib_teo, bin_sim_hist):
-
-
-    count_sim = np.histogram(datos_simulados, 18)[0]
-    count_sim = list(count_sim)
-
-    print(count_sim)
-
-    tt = arreglar_arreglo_chi_5elem(count_sim, bins_sim_hist)
-
-
-    frecuencias = tt[0]
-
-    print("frecuencias", frecuencias)
-    largo = len(tt[0])
-    segmentos = tt[1]
-
-    N = sum(frecuencias)
-
-    # Arreglar arreglo exponenciales para obtener la probabilidad de los intervalos
-
-    count_exp = np.histogram(expon, bins_sim_hist)[0] # Obtener el arreglo de frecuencias en los mismos intervalos
-    count_exp = list(count_exp)
-
-    # Juntar las probabilidades del ultimo intervalo de n-1 a inf
-
-    N_exp = sum(count_exp)
-    count_exp = arreglar_arreglo_probabilidades_exp(count_exp, largo)
-
-    print("count_exp", count_exp)
-
-
-    prob = []
-    assert(len(count_exp) == len(frecuencias))
-    for i in range(len(count_exp)):
-        prob.append(count_exp[i]/N_exp)
-
-
-    # Calculo estadistico T
-    T = 0
-    for i in range(largo):
-        # print(T)
-        if (prob[i]) != 0: # Reviso que el intervalo tomado no tenga ningun valor
-            T += ((frecuencias[i] - N * prob[i])**2 / (N * prob[i]))
-
-
-    from scipy.stats import chi2
-
-    # p-valor igual a una chi-cuadrado de k = 16 - 1 - 1 = 14
-
-    # p-valor = P(X^(14) > T)
-
-    print(T)
-
-    # print(f"p-valor con chi2 de grado 14: {1-chi2.cdf(T, largo-1-1):.5f}") # n-1=2
-    p_valor = 1-chi2.cdf(T, largo-1-1)
-    # print(f"{p_valor:.5f}") # n-1=2
-
-    return p_valor
-
-cola_espera_bins = np.histogram(tiempos_espera_cola_sim, bins=18)[0]
-print(calcular_chi2(tiempos_espera_cola_sim, gammas, cola_espera_bins))
+print(f"El p-valor del ej4 es :{calcular_chi2(tiempos_espera_cola_sim, gammas)}")
 
 
 # ==================================================================================================
 # Ejercicio 5
 
 
-nueva_sim_1 = simular_tiempos_demora(lamb=0.05, mu=0.1, t_inicial=0, Nsim=10000)
+nueva_sim_1 = simular_canal(lamb=0.5, mu=1, t_inicial=0, Npaquetes=10000)[4]
 
-print(nueva_sim_1)
+print(nueva_sim_1[1000:1050])
 
-nueva_sim_2 = simular_tiempos_demora(lamb=0.05, mu=0.1, t_inicial=0, Nsim=10000)
-
-print(nueva_sim_2)
+nueva_sim_2 = simular_canal(lamb=0.05, mu=0.1, t_inicial=0, Npaquetes=10000)[4]
 
 
-# plt.ylabel("Frecuencia")
-# plt.xlabel("Intervalo")
-# plt.title("Simulacion para lamb=0.05, mu=0.1, Nsim=10000")
-# plt.subplot(121)
-# plt.hist(nueva_sim_1, bins=18, color='green')
-
-
-# plt.ylabel("Frecuencia")
-# plt.xlabel("Intervalo")
-# plt.title("Simulacion para lamb=0.05, mu=0.1, Nsim=10000")
-# plt.subplot(122)
-# plt.hist(nueva_sim_2, bins=18, color='green')
-
+print(nueva_sim_2[1000:1050])
 
 fig = plt.figure()
 ax1 = fig.add_subplot(121)

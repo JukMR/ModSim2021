@@ -1,3 +1,6 @@
+# EJERCICIO 2
+# Merida Renny, Julian
+
 from random import random, seed
 from math import log, ceil
 
@@ -230,8 +233,8 @@ import matplotlib.pyplot as plt
 
 plt.title("Comparación tasas de uso versus distintos λ")
 plt.plot(lambs, tasas_uso_puro, marker='o', color='blue', label="Aloha puro")
-plt.xlabel("Lambdas")
-plt.ylabel("Tasas uso")
+plt.xlabel("Lambda")
+plt.ylabel("Tasa uso")
 
 plt.plot(lambs, tasas_uso_ranurado, marker='o', color='red', label="Aloha Ranurado")
 plt.legend(loc='best')

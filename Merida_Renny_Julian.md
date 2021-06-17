@@ -69,13 +69,13 @@ Para obtener los resultados se iterará sobre los distintos valores posibles de 
 
 ## Ejercicio 1
 
-La funcion `simular_canal` que simula el canal se basa en la funcion `Poisson_homogeneo` que simula un proceso de poisson con `Npaquetes` eventos, que en este caso son paquetes. Esta función es la misma vista en el teórico con la diferencia que genera exponenciales hasta cumplir el numero de paquetes necesario. También genera el ancho de los paquetes con una exponencial de parámetro `mu` y los agrega en forma de tuplas para conformar un arreglo de tuplas que simulará el canal.
+La función `simular_canal` que simula el canal se basa en la función `Poisson_homogeneo` que simula un proceso de Poisson con `Npaquetes` eventos, que en este caso son paquetes. Esta función es la misma vista en el teórico con la diferencia que genera exponenciales hasta cumplir el numero de paquetes necesario. También genera el ancho de los paquetes con una exponencial de parámetro `mu` y los agrega en forma de tuplas para conformar un arreglo de tuplas que simulará el canal.
 
-Luego `simular_canal` va atendiendo los paquetes de acuerdo al tiempo en el que llegan y su largo. Ya que los paquetes son retenidos en una cola de espera, si un paquete 'colapsa' con otro, este será agregado a un buffer y atendido apenas sea posible. En cada iteracion del algoritmo primero se revisa si hay algún paquete en el buffer, si es así se lo envia al canal.
+Luego `simular_canal` va atendiendo los paquetes de acuerdo al tiempo en el que llegan y su largo. Ya que los paquetes son retenidos en una cola de espera, si un paquete 'colapsa' con otro, este será agregado a un buffer y atendido apenas sea posible. En cada iteración del algoritmo primero se revisa si hay algún paquete en el buffer, si es así se lo envía al canal.
 
-Esta función también toma un `t_inicial` que permitira concatenar varias simulaciones partiendo de esta valor para los tiempos de llegada de los paquetes al canal.
+Esta función también toma un `t_inicial` que permitirá concatenar varias simulaciones partiendo de esta valor para los tiempos de llegada de los paquetes al canal.
 
-Por último, la función devuelve una la cantidad de paquetes enviados `paquetes_enviados`, el tiempo del ultimo paquete_enviado `tiempo_actual`, una lista con todos los tiempos de salida `tiempos_salida`, la cantidad de paquetes que se encolaron en el buffer `encolados`, una lista con los tiempos de demora que consiste en el tiempo desde que un paquete llega al canal hasta que efectivamente se envia `tiempos_demora` y por ultimo `tiempo_espera_cola` que será una lista con los tiempos desde que los paquetes llegan al canal y comienzan a enviarse. Este ultimo valor nos será util para el ejercicio 4.
+Por último, la función devuelve una la cantidad de paquetes enviados `paquetes_enviados`, el tiempo del ultimo paquete_enviado `tiempo_actual`, una lista con todos los tiempos de salida `tiempos_salida`, la cantidad de paquetes que se encolaron en el buffer `encolados`, una lista con los tiempos de demora que consiste en el tiempo desde que un paquete llega al canal hasta que efectivamente se envia `tiempos_demora` y por ultimo `tiempo_espera_cola` que será una lista con los tiempos desde que los paquetes llegan al canal y comienzan a enviarse. Este ultimo valor nos será útil para el ejercicio 4.
 
 ## Ejercicio 1.1
 
@@ -90,31 +90,31 @@ Se devuelve, `Media` que es la estimación de la Media al 98 % de confianza; `pa
 
 ## Ejercicio 1.2
 
-Para este algoritmo se generaron `N_sim` o `paq_gen` exponenciales con parámetro 0.5. Luego se muestran dos histogramas que comparan el histograma de los datos simulados con los nuevos datos de la exponencial de parametro 0.5 y por ultimo un histograma con la superposicion de ambos.
+Para este algoritmo se generaron `N_sim` o `paq_gen` exponenciales con parámetro 0.5. Luego se muestran dos histogramas que comparan el histograma de los datos simulados con los nuevos datos de la exponencial de parámetro 0.5 y por último un histograma con las diferencia de ambos.
 
 ## Ejercicio 1.3
 
-Para este ejercicio se utilizaron la funcion `arreglar_arreglo_chi_5elem` que modifica el arreglo de frecuencias para que todos los intervalos tengan al menos 5 observaciones. Para esto la función recortará el arreglo en el primer intervalo que cumpla está que su valor sea menor a 5 y lo conformara en un solo intervalo con la suma de todos los intervalos siguientes.
+Para este ejercicio se utilizaron la función `arreglar_arreglo_chi_5elem` que modifica el arreglo de frecuencias para que todos los intervalos tengan al menos 5 observaciones. Para esto la función recortará el arreglo en el primer intervalo que cumpla está que su valor sea menor a 5 y lo conformara en un solo intervalo con la suma de todos los intervalos siguientes.
 
 
-`calcular_chi2` es la funcion que toma dos listas de datos y acomoda los datos y aplica el test de bondad de ajuste calculando el estadístico T y por ultimo devolviendo el p-valor.
+`calcular_chi2` es la función que toma dos listas de datos y acomoda los datos y aplica el test de bondad de ajuste calculando el estadístico T y por ultimo devolviendo el p-valor.
 
 ## Ejercicio 1.4
 
-Este ejercicio utiliza el mismo algoritmo que en el ejercicio anterior con la diferencia que el segundo parametro que recibe es un arreglo con las `n_sim` gammas. Luego aplica el mismo procedimiento para acomodar los datos, calcular el estadístico T y devolver el p-valor.
+Este ejercicio utiliza el mismo algoritmo que en el ejercicio anterior con la diferencia que el segundo parámetro que recibe es un arreglo con las `n_sim` gammas. Luego aplica el mismo procedimiento para acomodar los datos, calcular el estadístico T y devolver el p-valor.
 
-Para este ejercicio la generación de los valores de la gamma se hizo usando la funcion `random.gammavariate()`.
+Para este ejercicio la generación de los valores de la gamma se hizo usando la función `random.gammavariate()`.
 
 ## Ejercicio 1.5
 
-En este ejercicio generamos dos arrays nuevos con los datos de las simulaciones solicitadas en el enunciado. Luego se generan 3 histogramas, los primeros muestran los histogramas por separado y el tercero muestra su superposición.
+En este ejercicio generamos dos arrays nuevos con los datos de las simulaciones solicitadas en el enunciado. Luego se generan 3 histogramas, los primeros muestran los histogramas por separado y el tercero muestra su comparación.
 
 
 <!-- ====================================================================================================== -->
 
 ## Ejercicio 2
 
-La función que genera el proceso de poisson homogéneo es llamada `Poisson_homogeneo` y fue extraida del teórico sin modificaciones. Luego tenemos 2 funciones llamadas `simular_canal_aloha` y `simular_canal_aloha_ranurado`. Ambas reciben como parametros un lambda para la tasa de generación y un T para el tiempo maximo de simulación.
+La función que genera el proceso de poisson homogéneo es llamada `Poisson_homogeneo` y fue extraída del teórico sin modificaciones. Luego tenemos 2 funciones llamadas `simular_canal_aloha` y `simular_canal_aloha_ranurado`. Ambas reciben como parámetros un lambda para la tasa de generación y un T para el tiempo máximo de simulación.
 
 Los algoritmos asumen que no hay detección de colisiones en el canal, por lo tanto como todos los paquetes son de ancho 1, cuando deban enviarse por el canal lo harán por 1 unidad de tiempo haya o no alguna colisión.
 
@@ -124,14 +124,14 @@ Los algoritmos asumen que no hay detección de colisiones en el canal, por lo ta
 
 ### Simular_canal_aloha, Aloha Puro
 
-En `simular_canal_aloha` primero se generan los paquetes, se acumulará el tiempo actual de procesamiento en `t_actual` y se guarda el array de paquetes en la lista `canal`. De aquí luego se van sacando paquetes mientras este no esté vacio y se revisa si el paquete tomado tendrá tiempo suficiente para ser enviado. Si hay tiempo suficiente, el paquete se agrega a la lista de `paquetes_enviados`, se lo elimina del canal y se avanza `t_actual` al tiempo de salida del paquete.
+En `simular_canal_aloha` primero se generan los paquetes, se acumulará el tiempo actual de procesamiento en `t_actual` y se guarda el array de paquetes en la lista `canal`. De aquí luego se van sacando paquetes mientras este no esté vacío y se revisa si el paquete tomado tendrá tiempo suficiente para ser enviado. Si hay tiempo suficiente, el paquete se agrega a la lista de `paquetes_enviados`, se lo elimina del canal y se avanza `t_actual` al tiempo de salida del paquete.
 
 
 Si el paquete no tiene tiempo para ser enviado se lo agrega a la lista `paquetes_rotos`, se lo elimina del canal, se suma 1 a la variable `n_paquetes_rotos` y se adelanta el `t_actual` hasta el tiempo de salida del paquete que no se envió.
 
 Si el tiempo actual es mayor al tiempo del paquete que se tomá se asume que estoy viendo un paquete que colisionó con alguno que ya se eliminó. Entonces se lo elimina, y se actualiza `t_actual` hasta el momento en el que el paquete deja de enviarse por el canal.
 
-Por ultimo, cuando en el canal solo queda un paquete, se revisa si hay tiempo suficiente antes de T para enviarlo. Si es así el paquete se envia sino se descarta y se finaliza la simulación.
+Por ultimo, cuando en el canal solo queda un paquete, se revisa si hay tiempo suficiente antes de T para enviarlo. Si es así el paquete se envía sino se descarta y se finaliza la simulación.
 
 <!-- ====================================================================================================== -->
 
@@ -141,9 +141,9 @@ Por ultimo, cuando en el canal solo queda un paquete, se revisa si hay tiempo su
 
 Este algoritmo toma y devuelve los mismos parámetros que `simular_canal_aloha`. Esto despues nos será util para poder generalizar las funciones en los siguientes incisos.
 
-El cuerpo de la funcion utiliza los mismos condicionales, y las mismas variables que vimos en la función anterior pero considerando ahora los tiempos redondeados al siguiente entero positivo con la funcion `ceil`.
+El cuerpo de la función utiliza los mismos condicionales, y las mismas variables que vimos en la función anterior pero considerando ahora los tiempos redondeados al siguiente entero positivo con la función `ceil`.
 
-De esta forma, estamos "juntando" todos los paquetes que se encontraban en un mismo intervalo de tiempo y podemos asegurar que si solo un paquete quiere enviar en un intervalo lo va a poder hacer y si habian dos o mas paquetes para ser enviados en un mismo intervalo todos van a colapsar y solo 'romperan' el canal por 1 intervalo de tiempo.
+De esta forma, estamos "juntando" todos los paquetes que se encontraban en un mismo intervalo de tiempo y podemos asegurar que si solo un paquete quiere enviar en un intervalo lo va a poder hacer y si habían dos o mas paquetes para ser enviados en un mismo intervalo todos van a colapsar y solo 'romperán' el canal por 1 intervalo de tiempo.
 
 <!-- ====================================================================================================== -->
 
@@ -176,12 +176,12 @@ lo que nos da la probabilidad de que un paquete sea enviado correctamente en el 
 
 ### Ejercicio 2.c
 
-Para esta sección se creó una funcion `ejercicio3`, que toma una funcion de las dos creadas en el ejercicio 1, `tasa_uso_puro` o
+Para esta sección se creó una función `ejercicio3`, que toma una función de las dos creadas en el ejercicio 1, `tasa_uso_puro` o
 `tasa_uso_ranurado`, y su nombre e imprime por consola cada lambda con su tasa de uso.
 
-La funcion `ejercicio3` crea dos listas vacias `tasas` y `lambs` y genera un for desde 1 hasta 31 para generar los lambdas desde 0.1, 0.2, 0.3, ..., 3.0 y evaluar con cada uno de ellos la tasa de uso del canal segun el método que se esté simulando. En las listas se guarda el lambda y su tasa.
+La función `ejercicio3` crea dos listas vacías `tasas` y `lambs` y genera un for desde 1 hasta 31 para generar los lambdas desde 0.1, 0.2, 0.3, ..., 3.0 y evaluar con cada uno de ellos la tasa de uso del canal según el método que se esté simulando. En las listas se guarda el lambda y su tasa.
 
-Luego una vez que termina el ciclo se calcula el indice de la maxima tasa y se la devuelve en una tupla junto con su respectivo lambda.
+Luego una vez que termina el ciclo se calcula el indice de la máxima tasa y se la devuelve en una tupla junto con su respectivo lambda.
 
 
 <!-- ====================================================================================================== -->
@@ -269,7 +269,7 @@ Histogramas separados:
 
 Comparacion de Histogramas superpuestos:
 
-![Histograma_datosSim_datosExp](Sobreposicion_hist_sim_exp.png)
+![Histograma_datosSim_datosExp](comparacion_hist_sim_exp.png)
 
 En esta ultima figura podemos ver como los histogramas se solapan casi perfectamente ya que los datos simulados estan representados con el color azul mientras que los datos de la exponencial se representan con color rojo y todo el histograma es de color violeta. Solo en el primer y tercer intervalo se observa que la exponencial es apenas mayor a la frecuencia de los datos simulados.
 
@@ -345,9 +345,9 @@ En el siguiente grafico podemos ver los histogramas de las dos simulaciones.
 ![sim1_y_sim2](sim1_sim2.png)
 
 
-Y en este histograma podemos ver su superposicion:
+Y en este histograma podemos ver su comparación:
 
-![Superposicion_sim1_sim2](comparacion_ej5.png)
+![comparacion_sim1_sim2](comparacion_sim1_sim2.png)
 
 
 Con esta información, vemos que para el primer caso si es buena estrategia esta division porque los tiempo de demora son, en su mayoria, menos a 0.5, y si lo comparamos con la simulación del inciso 1 que nos daba un `t_m` de casi 2 esto implica 4 veces menos tiempos de demora por paquete aproximadamente.

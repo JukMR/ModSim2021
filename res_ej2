@@ -1,0 +1,122 @@
+tasa_uso_puro : 8.08 % para lamb = 0.10
+tasa_uso_puro : 12.90 % para lamb = 0.20
+tasa_uso_puro : 17.13 % para lamb = 0.30
+tasa_uso_puro : 18.28 % para lamb = 0.40
+tasa_uso_puro : 17.64 % para lamb = 0.50
+tasa_uso_puro : 17.88 % para lamb = 0.60
+tasa_uso_puro : 17.29 % para lamb = 0.70
+tasa_uso_puro : 15.90 % para lamb = 0.80
+tasa_uso_puro : 14.46 % para lamb = 0.90
+tasa_uso_puro : 13.38 % para lamb = 1.00
+tasa_uso_puro : 12.35 % para lamb = 1.10
+tasa_uso_puro : 10.91 % para lamb = 1.20
+tasa_uso_puro : 9.44 % para lamb = 1.30
+tasa_uso_puro : 8.70 % para lamb = 1.40
+tasa_uso_puro : 7.57 % para lamb = 1.50
+tasa_uso_puro : 6.74 % para lamb = 1.60
+tasa_uso_puro : 6.16 % para lamb = 1.70
+tasa_uso_puro : 4.88 % para lamb = 1.80
+tasa_uso_puro : 4.33 % para lamb = 1.90
+tasa_uso_puro : 3.87 % para lamb = 2.00
+tasa_uso_puro : 3.34 % para lamb = 2.10
+tasa_uso_puro : 2.96 % para lamb = 2.20
+tasa_uso_puro : 2.41 % para lamb = 2.30
+tasa_uso_puro : 1.73 % para lamb = 2.40
+tasa_uso_puro : 1.77 % para lamb = 2.50
+tasa_uso_puro : 1.45 % para lamb = 2.60
+tasa_uso_puro : 1.24 % para lamb = 2.70
+tasa_uso_puro : 0.96 % para lamb = 2.80
+tasa_uso_puro : 0.88 % para lamb = 2.90
+tasa_uso_puro : 0.56 % para lamb = 3.00
+tasa_uso_ranurado : 9.26 % para lamb = 0.10
+tasa_uso_ranurado : 16.73 % para lamb = 0.20
+tasa_uso_ranurado : 22.42 % para lamb = 0.30
+tasa_uso_ranurado : 26.98 % para lamb = 0.40
+tasa_uso_ranurado : 29.93 % para lamb = 0.50
+tasa_uso_ranurado : 33.30 % para lamb = 0.60
+tasa_uso_ranurado : 33.95 % para lamb = 0.70
+tasa_uso_ranurado : 35.67 % para lamb = 0.80
+tasa_uso_ranurado : 36.01 % para lamb = 0.90
+tasa_uso_ranurado : 36.26 % para lamb = 1.00
+tasa_uso_ranurado : 36.85 % para lamb = 1.10
+tasa_uso_ranurado : 36.73 % para lamb = 1.20
+tasa_uso_ranurado : 35.53 % para lamb = 1.30
+tasa_uso_ranurado : 34.18 % para lamb = 1.40
+tasa_uso_ranurado : 33.52 % para lamb = 1.50
+tasa_uso_ranurado : 32.21 % para lamb = 1.60
+tasa_uso_ranurado : 31.33 % para lamb = 1.70
+tasa_uso_ranurado : 30.34 % para lamb = 1.80
+tasa_uso_ranurado : 28.82 % para lamb = 1.90
+tasa_uso_ranurado : 27.16 % para lamb = 2.00
+tasa_uso_ranurado : 25.07 % para lamb = 2.10
+tasa_uso_ranurado : 24.21 % para lamb = 2.20
+tasa_uso_ranurado : 23.89 % para lamb = 2.30
+tasa_uso_ranurado : 22.48 % para lamb = 2.40
+tasa_uso_ranurado : 19.85 % para lamb = 2.50
+tasa_uso_ranurado : 19.73 % para lamb = 2.60
+tasa_uso_ranurado : 18.01 % para lamb = 2.70
+tasa_uso_ranurado : 16.62 % para lamb = 2.80
+tasa_uso_ranurado : 16.33 % para lamb = 2.90
+tasa_uso_ranurado : 14.92 % para lamb = 3.00
+prob_paquete_puro : p = 0.82 para lamb = 0.10
+prob_paquete_puro : p = 0.67 para lamb = 0.20
+prob_paquete_puro : p = 0.54 para lamb = 0.30
+prob_paquete_puro : p = 0.44 para lamb = 0.40
+prob_paquete_puro : p = 0.37 para lamb = 0.50
+prob_paquete_puro : p = 0.29 para lamb = 0.60
+prob_paquete_puro : p = 0.25 para lamb = 0.70
+prob_paquete_puro : p = 0.20 para lamb = 0.80
+prob_paquete_puro : p = 0.17 para lamb = 0.90
+prob_paquete_puro : p = 0.13 para lamb = 1.00
+prob_paquete_puro : p = 0.11 para lamb = 1.10
+prob_paquete_puro : p = 0.09 para lamb = 1.20
+prob_paquete_puro : p = 0.07 para lamb = 1.30
+prob_paquete_puro : p = 0.06 para lamb = 1.40
+prob_paquete_puro : p = 0.05 para lamb = 1.50
+prob_paquete_puro : p = 0.04 para lamb = 1.60
+prob_paquete_puro : p = 0.04 para lamb = 1.70
+prob_paquete_puro : p = 0.03 para lamb = 1.80
+prob_paquete_puro : p = 0.02 para lamb = 1.90
+prob_paquete_puro : p = 0.02 para lamb = 2.00
+prob_paquete_puro : p = 0.01 para lamb = 2.10
+prob_paquete_puro : p = 0.01 para lamb = 2.20
+prob_paquete_puro : p = 0.01 para lamb = 2.30
+prob_paquete_puro : p = 0.01 para lamb = 2.40
+prob_paquete_puro : p = 0.01 para lamb = 2.50
+prob_paquete_puro : p = 0.01 para lamb = 2.60
+prob_paquete_puro : p = 0.00 para lamb = 2.70
+prob_paquete_puro : p = 0.00 para lamb = 2.80
+prob_paquete_puro : p = 0.00 para lamb = 2.90
+prob_paquete_puro : p = 0.00 para lamb = 3.00
+prob_paquete_ranurado : p = 0.91 para lamb = 0.10
+prob_paquete_ranurado : p = 0.82 para lamb = 0.20
+prob_paquete_ranurado : p = 0.73 para lamb = 0.30
+prob_paquete_ranurado : p = 0.67 para lamb = 0.40
+prob_paquete_ranurado : p = 0.61 para lamb = 0.50
+prob_paquete_ranurado : p = 0.55 para lamb = 0.60
+prob_paquete_ranurado : p = 0.52 para lamb = 0.70
+prob_paquete_ranurado : p = 0.45 para lamb = 0.80
+prob_paquete_ranurado : p = 0.39 para lamb = 0.90
+prob_paquete_ranurado : p = 0.38 para lamb = 1.00
+prob_paquete_ranurado : p = 0.34 para lamb = 1.10
+prob_paquete_ranurado : p = 0.32 para lamb = 1.20
+prob_paquete_ranurado : p = 0.27 para lamb = 1.30
+prob_paquete_ranurado : p = 0.25 para lamb = 1.40
+prob_paquete_ranurado : p = 0.22 para lamb = 1.50
+prob_paquete_ranurado : p = 0.20 para lamb = 1.60
+prob_paquete_ranurado : p = 0.19 para lamb = 1.70
+prob_paquete_ranurado : p = 0.17 para lamb = 1.80
+prob_paquete_ranurado : p = 0.15 para lamb = 1.90
+prob_paquete_ranurado : p = 0.14 para lamb = 2.00
+prob_paquete_ranurado : p = 0.12 para lamb = 2.10
+prob_paquete_ranurado : p = 0.11 para lamb = 2.20
+prob_paquete_ranurado : p = 0.10 para lamb = 2.30
+prob_paquete_ranurado : p = 0.09 para lamb = 2.40
+prob_paquete_ranurado : p = 0.08 para lamb = 2.50
+prob_paquete_ranurado : p = 0.07 para lamb = 2.60
+prob_paquete_ranurado : p = 0.07 para lamb = 2.70
+prob_paquete_ranurado : p = 0.06 para lamb = 2.80
+prob_paquete_ranurado : p = 0.06 para lamb = 2.90
+prob_paquete_ranurado : p = 0.05 para lamb = 3.00
+(18.73, 0.6000000000000001)
+(37.34, 1.0)

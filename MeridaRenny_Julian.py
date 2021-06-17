@@ -1,10 +1,10 @@
-# Ejercicio 1. C se toma = 1, mu = 1 y lamb = 0.5
+# EJERCICIO 1
 # Merida Renny, Julian
 
+# C se toma = 1, mu = 1 y lamb = 0.5
 
-from hashlib import new
 from random import random, seed
-from math import gamma, sqrt, log
+from math import sqrt, log
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -53,9 +53,9 @@ def simular_canal(lamb=0.5, mu=1, t_inicial=0, Npaquetes=100):
             paquetes_enviados += 1
             buffer.pop(0)
 
-        else: # El buffer esta vacio
+        else: # El buffer está vacio.
 
-            if len(canal) > 0: # El canal tiene algun paquete
+            if len(canal) > 0: # El canal tiene algún paquete.
 
                 llegada_paquete, ancho_paquete = canal[0]
                 if tiempo_actual > llegada_paquete: # Me pasé algún paquete que tengo que encolar.
@@ -63,18 +63,18 @@ def simular_canal(lamb=0.5, mu=1, t_inicial=0, Npaquetes=100):
                     canal.pop(0)
                     encolados += 1
 
-                else: # El buffer esta vacio y no perdí ningún paquete. Atiendo el paquete.
+                else: # El buffer está vacio y no perdí ningún paquete. Atiendo el paquete.
 
                     llegada_paquete, ancho_paquete = canal[0]
                     tiempo_actual = llegada_paquete + ancho_paquete
                     paquetes_enviados += 1
                     tiempos_salida.append(llegada_paquete + ancho_paquete)
                     tiempos_demora.append(ancho_paquete)
-                    tiempo_espera_cola.append(0) # El paquete no espero nada
+                    tiempo_espera_cola.append(0) # El paquete no esperó nada.
                     canal.pop(0)
 
-            else: # El canal esta vacio. Termino.
-                print("Me quede sin paquetes")
+            else: # El canal está vacio. Termino.
+                print("Me quedé sin paquetes")
                 break
 
     return paquetes_enviados, tiempo_actual, tiempos_salida, encolados, tiempos_demora, tiempo_espera_cola
@@ -136,7 +136,7 @@ print(f"El tiempo medio de demora tau_m es de: {Media_Muestral_al_98}")
 print(f"Nsim es: {n_sim}")
 print(f"El tiempo total simulado es de: {tiempo_total_sim}")
 
-# Estimacion de la tasa real de uso del canal
+# Estimación de la tasa real de uso del canal
 tasa_uso = n_sim / tiempo_total_sim
 
 print(f"La tasa real de uso estimada es de {tasa_uso * 100} %")
@@ -151,7 +151,7 @@ print(f"El intervalo de confianza del 98% es de: {Media_Muestral_al_98 - 2.33 * 
 # Ejercicio 2
 
 
-# Voy a tomar 18 intervalos
+# Voy a tomar 18 intervalos.
 intervalos = 18
 
 # Genero los datos para la hipotesis nula de que los datos simulados
@@ -159,13 +159,17 @@ intervalos = 18
 expon = [exponencial(0.5) for i in range(n_sim)]
 
 plt.subplot(211)
-plt.title("Hist de Nsim tiempos con datos simulados y Nsim datos exponenciales")
-plt.hist(x=expon, bins=18, label='Datos exponencial teorica', color='blue', edgecolor='black')
+plt.title("Histograma de Nsim tiempos con datos simulados y datos exponenciales")
+plt.hist(x=tiempos_demora_sim, bins=18, color="blue", label='Tiempos demora simulados', edgecolor='black')
+plt.xlabel("Tiempo")
+plt.ylabel("Frecuencia")
 plt.legend(loc='best')
 
 
 plt.subplot(212)
-plt.hist(x=tiempos_demora_sim, bins=18, color="red", label='Datos simulados', edgecolor='black')
+plt.hist(x=expon, bins=18, label='Datos de exponencial(0.5)', color='red', edgecolor='black')
+plt.xlabel("Tiempo")
+plt.ylabel("Frecuencia")
 plt.legend(loc='best')
 
 plt.savefig(fname='histogramas_separados_sim_exp.png')
@@ -174,11 +178,12 @@ plt.show()
 
 
 
-n_exp, bins_exp, patch_exp = plt.hist(x=tiempos_demora_sim, bins=18, color="blue", label="Datos simulados", alpha=0.7, edgecolor='black')
-plt.hist(x=expon, bins=bins_exp, color='red', label="Exponencial teorica", alpha=0.5, edgecolor='green')
-plt.title("Superposicion hist exponencial lamb=0.5 vs tiempos de demora")
+plt.hist(x=[tiempos_demora_sim, expon], bins=18, color=['blue', 'red'], label=["Tiempos demora simulados", "Datos de exponencial(0.5)"], edgecolor='black')
+plt.title("Comparación histogramas exponencial λ=0.5 vs tiempos de demora")
+plt.xlabel("Tiempo")
+plt.ylabel("Frecuencia")
 plt.legend(loc='best')
-plt.savefig(fname="Sobreposicion_hist_sim_exp.png")
+plt.savefig(fname="comparacion_hist_sim_exp.png")
 plt.show()
 
 # ==========================================================================
@@ -274,7 +279,7 @@ def calcular_chi2(datos_simulados, distrib_teo, parametros_estimados):
     # funcion arreglar_arreglo_chi_5elem)
 
 
-    print(f"El estadistico T es igual a {T}")
+    print(f"El estadístico T es igual a {T}")
     p_valor = 1-chi2.cdf(T, largo-1-1)
 
     return p_valor
@@ -295,7 +300,6 @@ print(f"El p-valor del ejercicio 3 es: {p_valor}")
 
 
 from random import gammavariate
-from math import exp
 
 
 # Estimacion Media_Tc
@@ -305,7 +309,7 @@ n_tc = len(tiempos_espera_cola_sim)
 
 estimacion_tc = tc/n_tc
 
-print(f"La estimacion de tc es {estimacion_tc}")
+print(f"La estimación de tc es {estimacion_tc}")
 
 
 ## Generación con Gammas
@@ -313,11 +317,12 @@ print(f"La estimacion de tc es {estimacion_tc}")
 gammas = [gammavariate(0.5, 2) for _ in range(n_sim)]
 
 
-frec, bin, _ = plt.hist(tiempos_espera_cola_sim, bins=18, color='blue', alpha=0.7, label='tiempo cola espera', edgecolor='cyan')
+plt.hist(x=[tiempos_espera_cola_sim, gammas], bins=18, color=['orange', 'cyan'], label=['Tiempos de cola espera', 'Distribución Gamma(0.5,2)'], edgecolor='black')
 
 
-plt.hist(gammas, bins=bin, color='orange', label="Distribucion gamma variate", alpha=0.7, edgecolor='black')
-plt.title("Superposicion de histogramas gamma(0.5,2) y tiempos espera en cola simulados")
+plt.title("Comparación de histogramas Gamma y Tiempos de espera en cola simulados")
+plt.xlabel("Tiempo")
+plt.ylabel("Frecuencias")
 plt.legend(loc='best')
 plt.savefig(fname="hist_gamma_vs_sim.png")
 plt.show()
@@ -345,39 +350,40 @@ fig = plt.figure()
 ax1 = fig.add_subplot(121)
 ax2 = fig.add_subplot(122)
 
-ax1.hist(nueva_sim_1, bins=18, color='green', edgecolor='black')
-ax2.hist(nueva_sim_2, bins=18, color='green', edgecolor='black')
+ax1.hist(nueva_sim_1, bins=18, color='green', edgecolor='black', label='λ=0.5, μ*C=1')
+ax1.legend(loc='best')
+ax2.hist(nueva_sim_2, bins=18, color='yellow', edgecolor='black', label='λ=0.05, μ*C=0.1')
+ax2.legend(loc='best')
 
 ax1.set_ylabel("Frecuencia")
-ax1.set_xlabel("Segundos")
-ax1.set_title("lamb=0.5, mu=10, Nsim=10000")
+ax1.set_xlabel("Tiempo")
 
 ax2.set_ylabel("Frecuencia")
-ax2.set_xlabel("Segundos")
-ax2.set_title("lamb=0.05, mu=1, Nsim=10000")
+ax2.set_xlabel("Tiempo")
 
+plt.legend(loc='best')
 plt.savefig(fname='sim1_sim2.png')
+fig.suptitle('Tiempos de demora con distintos parámetros con Nsim=10000')
 plt.show()
 
 fig = plt.figure()
-plt.hist(nueva_sim_1, bins=18, color='red', label='lamb=0.5, mu*c = 1', edgecolor='black')
-plt.hist(nueva_sim_2, bins=18, color='green', alpha=0.5, label="lamb=0.05, mu*c = 0.1", edgecolor='black')
+plt.hist(x=[nueva_sim_1, nueva_sim_2], bins=18, color=['green', 'yellow'], label=['λ=0.5, μ*C = 1', 'λ=0.05, μ*C = 0.1'], edgecolor='black')
 plt.legend(loc='best')
 plt.xlabel("Tiempos de demora")
 plt.ylabel("Frecuencias")
-plt.savefig(fname="comparacion_ej5.png")
-plt.title("Superposicion de los histogramas")
 
-plt.savefig(fname='Superposicion_sim1_sim2')
+plt.title("Comparación de histogramas tiempos demora con distintos parámetros")
+
+plt.savefig(fname='comparacion_sim1_sim2')
 plt.show()
 
 
 
-# ==========================================================================
+# ==================================================================================================
 '''
 ## Anexo
 
-# Algoritmo para calcular los mejores parámetros de gamma
+# Algoritmo para encontrar los mejores parámetros de gamma
 
 for k in range(1,11):
     print(f"alfa es {k * 0.1}, beta es {1/(k * 0.1)}")
@@ -393,16 +399,20 @@ for k in range(1,11):
     # plt.show()
 
 
-    frec, bin, _ = plt.hist(tiempos_espera_cola_sim, bins=18, color='blue', alpha=1, label='tiempo cola espera')
-    plt.hist(gammas, bins=bin, color='orange', label="Distribucion gamma variate", alpha=0.5)
+    frec, bin, _ = plt.hist(x=[tiempos_espera_cola_sim, gammas], bins=18, color=['blue', 'orange'], label=['tiempo cola espera', 'Distribucion gamma variate'])
     plt.legend(loc='best')
     plt.show()
 
 '''
 
 
-# ====================================================================
-# EJERCICIO 2
+
+
+
+
+
+
+# -------------------------------------------------------------------# EJERCICIO 2
 # Merida Renny, Julian
 
 from random import random, seed
@@ -637,8 +647,8 @@ import matplotlib.pyplot as plt
 
 plt.title("Comparación tasas de uso versus distintos λ")
 plt.plot(lambs, tasas_uso_puro, marker='o', color='blue', label="Aloha puro")
-plt.xlabel("Lambdas")
-plt.ylabel("Tasas uso")
+plt.xlabel("Lambda")
+plt.ylabel("Tasa uso")
 
 plt.plot(lambs, tasas_uso_ranurado, marker='o', color='red', label="Aloha Ranurado")
 plt.legend(loc='best')

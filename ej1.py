@@ -363,7 +363,7 @@ ax2.set_xlabel("Tiempo")
 
 plt.legend(loc='best')
 plt.savefig(fname='sim1_sim2.png')
-fig.suptitle('Tiempos de demora con distintos parámetros con Nsim=10000', fontsize=16)
+fig.suptitle('Tiempos de demora con distintos parámetros con Nsim=10000')
 plt.show()
 
 fig = plt.figure()

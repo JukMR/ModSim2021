@@ -159,15 +159,14 @@ intervalos = 18
 expon = [exponencial(0.5) for i in range(n_sim)]
 
 plt.subplot(211)
-plt.title("Histograma de Nsim tiempos con datos simulados y datos exponenciales")
-plt.hist(x=tiempos_demora_sim, bins=18, color="blue", label='Tiempos demora simulados', edgecolor='black')
+plt.title("Histograma de Nsim tiempos datos simulados y datos exponenciales")
+frec, bin, _ = plt.hist(x=tiempos_demora_sim, bins=18, color="blue", label='Tiempos demora simulados', edgecolor='black')
 plt.xlabel("Tiempo")
 plt.ylabel("Frecuencia")
 plt.legend(loc='best')
 
-
 plt.subplot(212)
-plt.hist(x=expon, bins=18, label='Datos de exponencial(0.5)', color='red', edgecolor='black')
+plt.hist(x=expon, bins=bin, label='Datos de exponencial(0.5)', color='red', edgecolor='black')
 plt.xlabel("Tiempo")
 plt.ylabel("Frecuencia")
 plt.legend(loc='best')
@@ -178,7 +177,7 @@ plt.show()
 
 
 
-plt.hist(x=[tiempos_demora_sim, expon], bins=18, color=['blue', 'red'], label=["Tiempos demora simulados", "Datos de exponencial(0.5)"], edgecolor='black')
+plt.hist(x=[tiempos_demora_sim, expon], bins=bin, color=['blue', 'red'], label=["Tiempos demora simulados", "Datos de exponencial(0.5)"], edgecolor='black')
 plt.title("Comparación histogramas exponencial λ=0.5 vs tiempos de demora")
 plt.xlabel("Tiempo")
 plt.ylabel("Frecuencia")
@@ -320,7 +319,7 @@ gammas = [gammavariate(0.5, 2) for _ in range(n_sim)]
 plt.hist(x=[tiempos_espera_cola_sim, gammas], bins=18, color=['orange', 'cyan'], label=['Tiempos de cola espera', 'Distribución Gamma(0.5,2)'], edgecolor='black')
 
 
-plt.title("Comparación de histogramas Gamma y Tiempos de espera en cola simulados")
+plt.title("Comparación Gamma y Tiempos de espera en cola simulados")
 plt.xlabel("Tiempo")
 plt.ylabel("Frecuencias")
 plt.legend(loc='best')
@@ -362,8 +361,9 @@ ax2.set_ylabel("Frecuencia")
 ax2.set_xlabel("Tiempo")
 
 plt.legend(loc='best')
-plt.savefig(fname='sim1_sim2.png')
 fig.suptitle('Tiempos de demora con distintos parámetros con Nsim=10000')
+
+plt.savefig(fname='sim1_sim2.png')
 plt.show()
 
 fig = plt.figure()
